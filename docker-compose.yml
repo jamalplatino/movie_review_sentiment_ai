@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build: ./fastapi_service
+    ports:
+      - "8001:8000"   # host:container, using 8001 to avoid conflict with Django
+    networks:
+      - sentiment-net
+
+  django:
+    build: ./django_app
+    ports:
+      - "8000:8000"
+    networks:
+      - sentiment-net
+    depends_on:
+      - fastapi
+
+  streamlit:
+    build: ./streamlit_app
+    ports:
+      - "8501:8501"
+    networks:
+      - sentiment-net
+    depends_on:
+      - fastapi
+
+networks:
+  sentiment-net:
+    driver: bridge
